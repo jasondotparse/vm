@@ -9,13 +9,19 @@
 // sub(0x04)        reg1 reg2        # Set reg1 = reg1 - reg2
 // halt(0xff)
 
-let mainMemory = [];
+let mainMemory = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+
+const load_word = '0x01';
+const store_word = '0x02';
+const add = '0x03';
+const sub = '0x04';
+const halt = '0xff';
 
 const startVM = (memory, program) => {
   // load the program into mainMemory
   mainMemory = [...program];
 
-  let registers = [0, '0x01', '0x02'];
+  let registers = [0, null, null];
 
   let executing = true;
 
@@ -25,15 +31,30 @@ const startVM = (memory, program) => {
     // fetch an instruction from memory
     const instruction = mainMemory[counter];
 
-    // decode it 
+    // decode and execute the instruction 
+    switch (instruction) {
+      case load_word:
+        const registerIndex = mainMemory[counter + 1] === '01' ? 1 : 2;
+        const addressOfInput = parseInt(mainMemory[counter + 2]);
 
-    // execute the instruction
+        registers[registerIndex] = mainMemory[addressOfInput];
+
+        break;
+      case store_word:
+        break;
+      case add:
+        break;
+      case sub:
+        break;
+      case halt:
+        break;
+    }
 
     // increment counter
-    registers[0]++;
+    registers[0] = registers[0] + 3;
 
     // if the instruction is '0xff', set executing to false.
-    if (instruction === '0xff') {
+    if (instruction === halt) {
       executing = false;
     }
   }
@@ -52,6 +73,8 @@ const program = [
 ];
 
 startVM(mainMemory, program);
+
+console.log(mainMemory);
 
 module.exports = {
   startVM
