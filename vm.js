@@ -18,42 +18,70 @@ const sub = '0x04';
 const halt = '0xff';
 
 const startVM = (memory, program) => {
-  // load the program into mainMemory
+  // load program into main memory
   mainMemory = [...program];
 
   let registers = [0, null, null];
 
+  // start the program
   let executing = true;
 
   while (executing) {
     const counter = registers[0];
 
-    // fetch an instruction from memory
+    // fetch
     const instruction = mainMemory[counter];
 
-    // decode and execute the instruction 
+    // decode
     switch (instruction) {
       case load_word:
-        const registerIndex = mainMemory[counter + 1] === '01' ? 1 : 2;
+        // execute
+        const registerIndex = mainMemory[counter + 1] === '0x01' ? 1 : 2;
+
         const addressOfInput = parseInt(mainMemory[counter + 2]);
 
-        registers[registerIndex] = mainMemory[addressOfInput];
+        const leftInput = parseInt(mainMemory[addressOfInput]);
+        const rightInput = parseInt(mainMemory[addressOfInput + 1]);
+
+        registers[registerIndex] = '0x' + rightInput.toString(16) + leftInput.toString(16);
 
         break;
       case store_word:
+        // execute
+        const word = parseInt(registers[1]).toString(16);
+
+        const bit1 = word.slice(0, 2);
+        const bit2 = word.slice(2);
+
+        mainMemory[14] = bit2;
+        mainMemory[15] = bit1;
+
         break;
       case add:
+        // execute
+        const sum = parseInt(registers[1]) + parseInt(registers[2]);
+
+        const hexSum = '0x' + sum.toString(16);
+
+        registers[1] = hexSum;
+
         break;
       case sub:
+        // execute
+        const diff = parseInt(registers[1]) - parseInt(registers[2]);
+
+        const hexDiff = '0x' + sum.toString(16);
+
+        registers[1] = hexDiff;
+
         break;
       case halt:
+        // execute
         break;
     }
 
-    // increment counter
     registers[0] = registers[0] + 3;
 
-    // if the instruction is '0xff', set executing to false.
     if (instruction === halt) {
       executing = false;
     }
@@ -72,6 +100,7 @@ const program = [
   '0x0c', '0x00'
 ];
 
+// boot up the VM, passing in memory it can mutate and a program it can run
 startVM(mainMemory, program);
 
 console.log(mainMemory);
