@@ -86,6 +86,8 @@ const startVM = (memory, program) => {
       executing = false;
     }
   }
+
+  return mainMemory
 };
 
 const program = [
@@ -103,8 +105,4 @@ const program = [
 // boot up the VM, passing in memory it can mutate and a program it can run
 startVM(mainMemory, program);
 
-console.log(mainMemory);
-
-module.exports = {
-  startVM
-}
+module.exports = startVM;
